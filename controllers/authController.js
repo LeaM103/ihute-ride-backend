@@ -118,7 +118,66 @@ const loginUser = async (req, res) => {
   }
 };
 
+// FORGOT PASSWORD
+const forgotPassword = async (req, res) => {
+
+  console.log("FORGOT PASSWORD REQUEST RECEIVED");
+  console.log(req.body);
+
+
+  try {
+
+    const { email } = req.body;
+
+
+    const user = await prisma.users.findUnique({
+
+      where: { email },
+
+    });
+
+
+
+    if (!user) {
+
+      return res.status(404).json({
+
+        message: "Email not found",
+
+      });
+
+    }
+
+
+
+    res.json({
+
+      message: "Password reset request received",
+
+    });
+
+
+
+  } catch (error) {
+
+
+    console.log("FORGOT PASSWORD ERROR:");
+    console.log(error.message);
+
+
+
+    res.status(500).json({
+
+      message: "Server error",
+
+    });
+
+
+  }
+
+};
 module.exports = {
   registerUser,
   loginUser,
+  forgotPassword,
 };
