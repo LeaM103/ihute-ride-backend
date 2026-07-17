@@ -10,7 +10,6 @@ const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // Check if user already exists
     const userExists = await prisma.users.findUnique({
       where: { email },
     });
@@ -21,11 +20,9 @@ const registerUser = async (req, res) => {
       });
     }
 
-    // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create user
     const newUser = await prisma.users.create({
       data: {
         name,
@@ -34,7 +31,6 @@ const registerUser = async (req, res) => {
       },
     });
 
-    // Remove password before sending response
     const { password: _, ...user } = newUser;
 
     res.json({
@@ -59,7 +55,6 @@ const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Find user
     const foundUser = await prisma.users.findUnique({
       where: { email },
     });
@@ -70,7 +65,6 @@ const loginUser = async (req, res) => {
       });
     }
 
-    // Check password
     const validPassword = await bcrypt.compare(
       password,
       foundUser.password
@@ -82,12 +76,10 @@ const loginUser = async (req, res) => {
       });
     }
 
-    // Check JWT secret
     if (!process.env.JWT_SECRET) {
-      throw new Error("JWT_SECRET is not defined in .env");
+      throw new Error("JWT_SECRET is not defined");
     }
 
-    // Generate token
     const token = jwt.sign(
       {
         id: foundUser.id,
@@ -118,7 +110,74 @@ const loginUser = async (req, res) => {
   }
 };
 
+// FORGOT PASSWORD
+const forgotPassword = async (req, res) => {
+  console.log("FORGOT PASSWORD REQUEST RECEIVED");
+  console.log(req.body);
+
+  try {
+    const { email } = req.body;
+
+    const user = await prisma.users.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "Email not found",
+      });
+    }
+
+    res.json({
+      message: "Password reset request received",
+    });
+  } catch (error) {
+    console.log("FORGOT PASSWORD ERROR:");
+    console.log(error.message);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+
+// UPDATE PROFILE
+const updateProfile = async (req, res) => {
+  console.log("UPDATE PROFILE REQUEST");
+
+  try {
+    const { id, name, phone, occupation } = req.body;
+
+    const user = await prisma.users.update({
+      where: {
+        id: Number(id),
+      },
+      data: {
+        name,
+        phone,
+        occupation,
+      },
+    });
+
+    res.json({
+      message: "Profile updated successfully",
+      user,
+    });
+  } catch (err) {
+    console.error("UPDATE PROFILE ERROR");
+    console.error(err.message);
+
+    res.status(500).json({
+      message: "Failed to update profile",
+    });
+  }
+};
+
+
+// EXPORT CONTROLLERS
 module.exports = {
   registerUser,
   loginUser,
+  forgotPassword,
+  updateProfile,
 };
