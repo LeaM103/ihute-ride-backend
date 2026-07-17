@@ -7,7 +7,7 @@ require("dotenv").config({ path: path.resolve(__dirname, ".env") });
 const fs = require("fs");
 console.log("ENV FILE EXISTS:", fs.existsSync(path.join(__dirname, ".env")));
 
-console.log("JWT_SECRET =", process.env.JWT_SECRET);
+
 const authRoutes = require("./routes/authRoutes");
 
 const app = express();
