@@ -47,6 +47,7 @@ const registerUser = async (req, res) => {
   }
 };
 
+
 // LOGIN USER
 const loginUser = async (req, res) => {
   console.log("LOGIN REQUEST RECEIVED");
@@ -100,6 +101,7 @@ const loginUser = async (req, res) => {
         email: foundUser.email,
       },
     });
+
   } catch (err) {
     console.error("LOGIN ERROR:");
     console.error(err.message);
@@ -109,6 +111,7 @@ const loginUser = async (req, res) => {
     });
   }
 };
+
 
 // FORGOT PASSWORD
 const forgotPassword = async (req, res) => {
@@ -131,6 +134,7 @@ const forgotPassword = async (req, res) => {
     res.json({
       message: "Password reset request received",
     });
+
   } catch (error) {
     console.log("FORGOT PASSWORD ERROR:");
     console.log(error.message);
@@ -141,9 +145,11 @@ const forgotPassword = async (req, res) => {
   }
 };
 
+
 // UPDATE PROFILE
 const updateProfile = async (req, res) => {
   console.log("UPDATE PROFILE REQUEST");
+  console.log(req.body);
 
   try {
     const { id, name, phone, occupation } = req.body;
@@ -163,6 +169,7 @@ const updateProfile = async (req, res) => {
       message: "Profile updated successfully",
       user,
     });
+
   } catch (err) {
     console.error("UPDATE PROFILE ERROR");
     console.error(err.message);
