@@ -156,7 +156,7 @@ const updateProfile = async (req, res) => {
 
     const user = await prisma.users.update({
       where: {
-        id: Number(id),
+        id: id,
       },
       data: {
         name,
